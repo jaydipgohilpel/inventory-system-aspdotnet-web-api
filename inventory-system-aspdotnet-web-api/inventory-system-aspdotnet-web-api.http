@@ -1,0 +1,6 @@
+@inventory_system_aspdotnet_web_api_HostAddress = http://localhost:5161
+
+GET {{inventory_system_aspdotnet_web_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
