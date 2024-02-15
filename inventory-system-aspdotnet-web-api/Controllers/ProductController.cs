@@ -2,12 +2,14 @@
 
 using inventory_system_aspdotnet_web_api.Models;
 using inventory_system_aspdotnet_web_api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
 namespace inventory_system_aspdotnet_web_api.Controllers
 {
+    [Authorize]
     [Route("api/product")]
     [ApiController]
     public class ProductController : ControllerBase

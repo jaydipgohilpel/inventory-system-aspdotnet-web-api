@@ -1,19 +1,22 @@
 ﻿using inventory_system_aspdotnet_web_api.Models;
 using inventory_system_aspdotnet_web_api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace inventory_system_aspdotnet_web_api.Controllers
 {
+    [Authorize]
     [Route("api/customer")]
     [ApiController]
-    
-
     public class CustomerController : ControllerBase
     {
-        public static int _ERRORCODE = 500;
+       
         private readonly CustomerRepository _customerRepository;
+        ResponseHelper Responce = new ResponseHelper();
+        GetDataResponseHelper GetDataResponce = new GetDataResponseHelper();
 
         public CustomerController(CustomerRepository customerRepository)
         {
@@ -21,17 +24,19 @@ namespace inventory_system_aspdotnet_web_api.Controllers
         }
 
         [HttpGet]
+       
         public ActionResult<IEnumerable<GetCustomer>> Get()
         {
             try
             {
                 List<GetCustomer> customer = new List<GetCustomer>();
                 customer = _customerRepository.GetAllCustomer().ToList();
-                return Ok(new { data = customer, success = true });
+                GetDataResponce.Data = customer;
+                return Ok(GetDataResponce);
             }
             catch (Exception ex)
             {
-                return StatusCode(_ERRORCODE, ex.Message);
+                return StatusCode(Constants._ERRORCODE, ex.Message);
             }
         }
 
@@ -46,13 +51,16 @@ namespace inventory_system_aspdotnet_web_api.Controllers
             {
                 var rowsAffected = _customerRepository.AddOrUpdateCustomer(null,customer);
                 if (rowsAffected == 1)
-                    return Ok(new { message = "Customer added successfully.", success = true });
+                {
+                    GetDataResponce.Message = "Customer added successfully.";
+                    return Ok(GetDataResponce);
+                }
                 else return BadRequest();
 
             }
             catch (Exception ex)
             {
-                return StatusCode(_ERRORCODE, ex.Message);;
+                return StatusCode(Constants._ERRORCODE, ex.Message);;
             }
         }
 
@@ -73,7 +81,7 @@ namespace inventory_system_aspdotnet_web_api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(_ERRORCODE, ex.Message);;
+                return StatusCode(Constants._ERRORCODE, ex.Message);;
             }
         }
 
@@ -93,7 +101,7 @@ namespace inventory_system_aspdotnet_web_api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(_ERRORCODE, ex.Message);;
+                return StatusCode(Constants._ERRORCODE, ex.Message);;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using inventory_system_aspdotnet_web_api.Models;
 using inventory_system_aspdotnet_web_api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -7,6 +8,7 @@ using Microsoft.Data.SqlClient;
 
 namespace inventory_system_aspdotnet_web_api.Controllers
 {
+    [Authorize]
     [Route("api/order")]
     [ApiController]
     public class OrderController : ControllerBase   
