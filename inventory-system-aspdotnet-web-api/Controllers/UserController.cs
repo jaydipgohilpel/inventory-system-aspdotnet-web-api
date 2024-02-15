@@ -37,6 +37,7 @@ namespace inventory_system_aspdotnet_web_api.Controllers
 
         // POST api/<UserController>
         [HttpPost]
+        [Route("register")]
         public ActionResult<IEnumerable<Users>> Post(Users users)
         {
             if (users.Name == null || users.Password == null || users.Email == null)
@@ -80,7 +81,7 @@ namespace inventory_system_aspdotnet_web_api.Controllers
                 return BadRequest("all fields are required");
             try
             {
-                var token=_userRepository.LoginUser(users);
+                var token = _userRepository.LoginUser(users);
                 LoginResponce.token = token;
                 return Ok(LoginResponce);
             }

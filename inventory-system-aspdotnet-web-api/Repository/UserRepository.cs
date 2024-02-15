@@ -1,19 +1,11 @@
 ﻿using inventory_system_aspdotnet_web_api.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace inventory_system_aspdotnet_web_api.Repository
 {
@@ -179,16 +171,19 @@ namespace inventory_system_aspdotnet_web_api.Repository
             }
         }
 
-
+        // Define your custom claim types
+        const string CustomNameClaimType = "name";
+        const string CustomEmailClaimType = "email";
+        const string CustomUserIdClaimType = "userId";
         private string GenerateToken(ReturnLoginUsers user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
          {
-            new Claim(ClaimTypes.Name, user.Name.Trim()),
-            new Claim(ClaimTypes.Email, user.Email.Trim()),
-            new Claim(ClaimTypes.Sid, user.UserId.ToString()),
+                new Claim(CustomNameClaimType, user.Name.Trim()),
+                new Claim(CustomEmailClaimType, user.Email.Trim()),
+                new Claim(CustomUserIdClaimType, user.UserId.ToString())
         };
 
 
