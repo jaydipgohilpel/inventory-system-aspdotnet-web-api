@@ -25,7 +25,8 @@ namespace inventory_system_aspdotnet_web_api.Models
     {
         public int? CustomerId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; } = null!;        
+        public DateTime? UpdatedAt { get; set; } = null!;
+        public int? UserId { get; set; } = null!;
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

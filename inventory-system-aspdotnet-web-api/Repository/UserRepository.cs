@@ -30,10 +30,8 @@ namespace inventory_system_aspdotnet_web_api.Repository
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
                     var SPName = "add_user_registration";
-                    if (userId != null) SPName = "update_customer";
                     SqlCommand cmd = new SqlCommand(SPName, con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    if (userId != null) cmd.Parameters.AddWithValue("@user_id", Convert.ToInt32(userId));
                     cmd.Parameters.AddWithValue("@name", user.Name);
                     cmd.Parameters.AddWithValue("@email", user.Email);
 

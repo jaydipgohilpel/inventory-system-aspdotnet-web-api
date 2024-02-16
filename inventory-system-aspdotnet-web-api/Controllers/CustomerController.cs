@@ -16,6 +16,7 @@ namespace inventory_system_aspdotnet_web_api.Controllers
        
         private readonly CustomerRepository _customerRepository;
         ResponseHelper Responce = new ResponseHelper();
+        ObjectResponseHelper ObjectResponce = new ObjectResponseHelper();
         GetDataResponseHelper GetDataResponce = new GetDataResponseHelper();
 
         public CustomerController(CustomerRepository customerRepository)
@@ -49,11 +50,12 @@ namespace inventory_system_aspdotnet_web_api.Controllers
 
             try
             {
-                var rowsAffected = _customerRepository.AddOrUpdateCustomer(null,customer);
-                if (rowsAffected == 1)
+                var data = _customerRepository.AddOrUpdateCustomer(null,customer);
+                if (data != null)
                 {
-                    GetDataResponce.Message = "Customer added successfully.";
-                    return Ok(GetDataResponce);
+                    ObjectResponce.Message = "Customer added successfully.";
+                    ObjectResponce.Data = data;
+                    return Ok(ObjectResponce);
                 }
                 else return BadRequest();
 
@@ -73,9 +75,13 @@ namespace inventory_system_aspdotnet_web_api.Controllers
 
             try
             {
-                var rowsAffected = _customerRepository.AddOrUpdateCustomer(id, customer);
-                if (rowsAffected == 1)
-                    return Ok(new{ message = "Customer Updated successfully.", success = true });
+                var data = _customerRepository.AddOrUpdateCustomer(id, customer);
+                if (data != null)
+                {
+                    ObjectResponce.Message = "Customer Updated successfully.";
+                    ObjectResponce.Data = data;
+                    return Ok(ObjectResponce);
+                }
                 else return BadRequest();
 
             }

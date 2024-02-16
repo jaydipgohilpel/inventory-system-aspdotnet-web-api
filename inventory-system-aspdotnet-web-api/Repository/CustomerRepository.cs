@@ -1,4 +1,5 @@
 ﻿using inventory_system_aspdotnet_web_api.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -9,18 +10,24 @@ namespace inventory_system_aspdotnet_web_api.Repository
     {
         private readonly string _connectionString;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string _UserId;
+        private  string _UserId;
 
         public CustomerRepository(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _connectionString = configuration.GetConnectionString("dbcs");
             _httpContextAccessor = httpContextAccessor;
-            _UserId = httpContextAccessor.HttpContext.Items["userId"]?.ToString();
+           
+        }
+
+
+        public string getUserId()
+        {
+            return _httpContextAccessor.HttpContext.Items["userId"].ToString();
         }
 
         public IEnumerable<GetCustomer> GetAllCustomer()
         {
-           var k= _UserId;
+                    
             List<GetCustomer> lastCustomer = new List<GetCustomer>();
             try
             {
@@ -32,15 +39,7 @@ namespace inventory_system_aspdotnet_web_api.Repository
                     SqlDataReader rdr = cmd.ExecuteReader();
                     while (rdr.Read())
                     {
-                        GetCustomer customer = new GetCustomer();
-                        customer.CustomerId = Convert.ToInt32(rdr["customer_id"]);
-                        customer.CustomerName = rdr["customer_name"].ToString();
-                        customer.CustomerEmail = rdr["customer_email"].ToString();
-                        customer.CustomerAddress = rdr["customer_address"].ToString();
-                        customer.CustomerPhone = rdr["customer_phone"].ToString();
-                        customer.CreatedAt = Convert.ToDateTime(rdr["created_at"]);
-
-                        lastCustomer.Add(customer);
+                        lastCustomer.Add(ReadData(rdr));
                     }
                     con.Close();
                 }
@@ -53,10 +52,11 @@ namespace inventory_system_aspdotnet_web_api.Repository
             return lastCustomer;
         }
 
-        public int AddOrUpdateCustomer(int? customerId, Customer customer)
+        public GetCustomer AddOrUpdateCustomer(int? customerId, Customer customer)
         {
             try
             {
+                _UserId = getUserId();
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
                     var SPName = "add_customer";
@@ -68,10 +68,17 @@ namespace inventory_system_aspdotnet_web_api.Repository
                     cmd.Parameters.AddWithValue("@customer_email", customer.CustomerEmail);
                     cmd.Parameters.AddWithValue("@customer_address", customer.CustomerAddress);
                     cmd.Parameters.AddWithValue("@customer_phone", customer.CustomerPhone);
+                    cmd.Parameters.AddWithValue("@userId", _UserId);
                     con.Open();
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    con.Close();
-                    return rowsAffected;
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    GetCustomer newCustomer = new GetCustomer();
+                    if (rdr.Read())
+                    {
+                        newCustomer = ReadData(rdr);
+                        con.Close();
+                    }
+                    return newCustomer;
 
                 }
             }
@@ -79,6 +86,22 @@ namespace inventory_system_aspdotnet_web_api.Repository
             {
                 throw;
             }
+        }
+
+        public GetCustomer ReadData(SqlDataReader rdr)
+        {
+            GetCustomer newCustomer = new GetCustomer();
+            newCustomer.CustomerId = Convert.ToInt32(rdr["customer_id"]);
+            newCustomer.CustomerName = rdr["customer_name"].ToString();
+            newCustomer.CustomerEmail = rdr["customer_email"].ToString();
+            newCustomer.CustomerAddress = rdr["customer_address"].ToString();
+            newCustomer.CustomerPhone = rdr["customer_phone"].ToString();
+            newCustomer.CreatedAt = Convert.ToDateTime(rdr["created_at"]);
+            if (!rdr.IsDBNull(rdr.GetOrdinal("updated_at")))
+               newCustomer.UpdatedAt = Convert.ToDateTime(rdr["updated_at"]);
+            if (!rdr.IsDBNull(rdr.GetOrdinal("userId")))
+                newCustomer.UserId = Convert.ToInt32(rdr["userId"]);
+            return newCustomer;
         }
 
 

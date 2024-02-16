@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="db\" />
+    <Folder Include="db\SP_Query\" />
   </ItemGroup>
 
 </Project>
