@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,6 +19,15 @@ namespace inventory_system_aspdotnet_web_api.Middleware
 
         public async Task Invoke(HttpContext context)
         {
+            // Check if the request is for a controller annotated with [AllowAnonymous]
+            var endpoint = context.GetEndpoint();
+            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
+            {
+                // Skip authentication for controllers annotated with [AllowAnonymous]
+                await _next(context);
+                return;
+            }
+
             if (!context.Request.Headers.ContainsKey("Authorization"))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
