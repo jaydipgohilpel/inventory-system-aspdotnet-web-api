@@ -1,4 +1,5 @@
-﻿using inventory_system_aspdotnet_web_api.Repository;
+﻿using inventory_system_aspdotnet_web_api.Middleware;
+using inventory_system_aspdotnet_web_api.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,7 +22,7 @@ builder.Services.AddSingleton<ProductRepository>();
 builder.Services.AddSingleton<OrderRepository>();
 builder.Services.AddSingleton<UserRepository>();
 
-
+builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -99,7 +100,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<JwtAuthenticationMiddleware>();
 app.UseAuthorization();
 app.UseAuthorization();
 

@@ -8,16 +8,20 @@ namespace inventory_system_aspdotnet_web_api.Repository
     public class CustomerRepository
     {
         private readonly string _connectionString;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly string _UserId;
 
-        public CustomerRepository(IConfiguration configuration)
+        public CustomerRepository(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _connectionString = configuration.GetConnectionString("dbcs");
+            _httpContextAccessor = httpContextAccessor;
+            _UserId = httpContextAccessor.HttpContext.Items["userId"]?.ToString();
         }
 
         public IEnumerable<GetCustomer> GetAllCustomer()
         {
+           var k= _UserId;
             List<GetCustomer> lastCustomer = new List<GetCustomer>();
-
             try
             {
                 using (SqlConnection con = new SqlConnection(_connectionString))
