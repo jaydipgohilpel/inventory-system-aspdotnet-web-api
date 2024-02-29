@@ -1,0 +1,7 @@
+first time
+-------------
+Scaffold-DbContext "Server=(localdb)\ProjectModels;Database=mylocalDatabase;Trusted_Connection=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+update
+-----------
+Scaffold-DbContext "Server=(localdb)\ProjectModels;Database=mylocalDatabase;Trusted_Connection=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
